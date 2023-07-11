@@ -43,8 +43,11 @@ const CreatePost = () => {
   const handleSubmit =()=>{
 
   }
-  const handleChange =(e)=>{
-    setform({...form,[e.target.name] : e.target.value})
+  const handleChangeName =(e)=>{
+    setform({...form,name : e.target.value})
+  }
+   const handleChangePrompt =(e)=>{
+    setform({...form,prompt : e.target.value})
   }
   const handleSurpriseMe =()=>{
     const randomPrompt=getRandomPrompt(form.prompt);
@@ -65,7 +68,7 @@ const CreatePost = () => {
   name="name"
   placeholder="Ex., john doe"
   value={form.name}
-  handleChange={handleChange}
+  handleChange={handleChangeName}
 />
 
 <FormField
@@ -74,7 +77,7 @@ const CreatePost = () => {
   name="prompt"
   placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
     value={form.prompt}
-  handleChange={handleChange}
+  handleChange={handleChangePrompt}
   handleSurpriseMe={handleSurpriseMe}
 />
 
