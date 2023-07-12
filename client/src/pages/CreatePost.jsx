@@ -40,11 +40,37 @@ const CreatePost = () => {
 
   }
 
-  const handleSubmit =()=>{
-
+  const handleSubmit =async(e)=>{
+    e.preventDefault();
+    if(form.prompt  || form.photo){
+      setloading(true);
+      try {
+        const response=await fetch('http://localhost:8080/api/v1/post',{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify(form)
+        })
+        await response.json();
+        navigate('/');
+      } catch (error) {
+        alert(error)
+      }
+      finally{
+        setloading(false);
+      }
+    }
+    else{
+      alert("please enter a promot");
+    }
   }
-  const handleChange =(e)=>{
-    setform({...form,[e.target.name] : e.target.value})
+  const handleChangeName =(e)=>{
+    setform({...form,name : e.target.value})
+  }
+  const handleChangePrompt =(e)=>{
+
+    setform({...form,prompt : e.target.value})
   }
   const handleSurpriseMe =()=>{
     const randomPrompt=getRandomPrompt(form.prompt);
@@ -65,7 +91,7 @@ const CreatePost = () => {
   name="name"
   placeholder="Ex., john doe"
   value={form.name}
-  handleChange={handleChange}
+  handleChange={handleChangeName}
 />
 
 <FormField
@@ -73,8 +99,9 @@ const CreatePost = () => {
   type="text"
   name="prompt"
   placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
-    value={form.prompt}
-  handleChange={handleChange}
+  value={form.prompt}
+  isSurpriseMe
+  handleChange={handleChangePrompt}
   handleSurpriseMe={handleSurpriseMe}
 />
 

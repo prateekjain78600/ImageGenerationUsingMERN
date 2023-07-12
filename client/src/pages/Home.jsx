@@ -16,7 +16,44 @@ import { Loader, FormField, Card } from "../components";
     const [loading, setloading] = useState(false);
     const [allPost, setAllPost] = useState(null);
     const [searchText, setsearchText] = useState('');
+    const[searchReseults,setSearchResults]=useState(null);
+    const[searchTimeout,setSearchTimeout]=useState(null);
 
+    useEffect(()=>{
+      const fetchPosts=async()=>{
+        setloading(true);
+        try {
+          const response=await fetch('http://localhost:8080/api/v1/post',{
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+          })
+          if(response.ok){
+            const result=await response.json();
+            setAllPost(result.data.reverse());
+          }
+        } catch (error) {
+          alert(error)
+        }
+        finally{
+          setloading(false);
+        }
+      }
+      fetchPosts();
+    },[]);
+    const handleSearchChange=(e)=>{
+      clearTimeout(searchTimeout);
+      setsearchText(e.target.value);
+
+      setSearchTimeout(
+
+      setTimeout(()=>{
+        const searchReseults=allPost.filter((item)=>item.name.toLowerCase().includes(searchText.toLowerCase())|| item.prompt.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchResults(searchReseults)
+      },500)
+      );
+    }
 
     return (
       <section className="max-w-7xl mx-auto">
@@ -25,7 +62,15 @@ import { Loader, FormField, Card } from "../components";
           <p className="mt-2 text-[#666e75] text-[16px] max-w-auto">Browse through a collections of imigination and visually stunning images generates by Image Generation</p>
         </div>
         <div className="mt-16">
-          <FormField />
+          <FormField 
+          labelName="Search post"
+          type="text"
+          name="text"
+          placeholder="serach post"
+          value={searchText}
+          handleChange={handleSearchChange}
+          />
+          
 
         </div>
         <div className="mt-10">
@@ -41,13 +86,13 @@ import { Loader, FormField, Card } from "../components";
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
                   {searchText ?  (
                     <RenderCard
-                      data={[]}
+                      data={searchReseults}
                       title="No search result found"
                     />
                   ) : (
                     <RenderCard
-                      data={[]}
-                      title="No post found"
+                      data={allPost}
+                      title="No post  found"
                     />
                   )}
                 </div>
